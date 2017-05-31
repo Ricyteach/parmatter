@@ -1,7 +1,7 @@
 parmatter
 --------
 
-Tools for parsable formatters (with unformat() capability).
+Tools for formatters that can also parse strings (i.e., with unformat() capability).
 
 Example usage: 
 
