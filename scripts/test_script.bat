@@ -1,0 +1,2 @@
+﻿c:\
+python exit.py
