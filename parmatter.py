@@ -1,7 +1,7 @@
 '''parmatter
 --------
 
-Tools for parsable formatters (with unformat() capability).
+Tools for parsing formatters (that can also parse strings, i.e., with unformat() capability).
 
 Example usage: 
 
@@ -90,10 +90,13 @@ class Formatter():
         return string.Formatter.convert_field(self, value, conversion)
 
 class Parmatter(Formatter):
-    '''A parsable formatter. The various string format API methods can be overridden by child classes using 
+    '''A parsing formatter. The various string format API methods can be overridden by child classes using 
     super() for convenience, except the Parmatter.parse method. It is routed to the parser, not the formatter. 
     If a child class needs to access __formatter.parse, it needs be done thusly:
         obj._Parmatter__formatter.parse'''
     def unformat(self, format, string, extra_types=dict(s=str), evaluate_result=True):
+        '''Inverse of format. Match my format to the string exactly.
+
+        Return a parse.Result or parse.Match instance or None if there's no match.
+        '''
         return _parse.parse(format, string, extra_types, evaluate_result)
-    unformat.__doc__ = _parse.Parser.parse.__doc__
