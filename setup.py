@@ -14,7 +14,7 @@ def read(fname):
         return f.read()
 
 setup(
-    name = 'candemaker',
+    name = 'parmatter',
     version = '0.0.1',
     author = 'Rick Teachey',
     author_email = 'rickteachey@cbceng.com',
