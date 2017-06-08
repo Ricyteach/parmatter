@@ -60,14 +60,14 @@ Some custom parmatters are also available.
 `VersatileParmatter` is a parmatter with a combination of the above functionalities:
 *  a pre-compiled (i.e., static) parser
 *  a default *positional* namespace
-*  `format` method can populate fields using attributes from an object provided as an argument: 
+*  `format` method can populate fields using attributes from an object provided as an argument
 
-    >>> obj = type('MyClass', (), {})()
-    >>> obj.x = 'foo'
-    >>> f = VersatileParmatter('{x}: {}', 'bar')
-    >>> assert f.format(obj) == 'foo: bar'
-    >>> f.unformat('foo: bar')
-    <Result ('foo',) {'x': 'bar'}>
+        >>> obj = type('MyClass', (), {})()
+        >>> obj.x = 'foo'
+        >>> f = VersatileParmatter('{x}: {}', 'bar')
+        >>> assert f.format(obj) == 'foo: bar'
+        >>> f.unformat('foo: bar')
+        <Result ('foo',) {'x': 'bar'}>
 
 Basic Format Groups
 -------------------
@@ -97,13 +97,13 @@ Builds the LineType sequence and LineType.unformat result for a file. Raises Typ
 Use `line_rules` to define valid LineType succession (i.e., which line types are allowed to follow a given line type). Use `None` for the first line. 
 
 Given some example file (representing a group of 4 nodes) at 'SOME_PATH' and the `NodeCount`, `NodeLine` format groups above:
-    
-    4
-    1       0.0       0.0
-    2       1.0       0.0
-    3       0.0       1.0
-    4       1.0       1.0
-    
+
+        4
+        1       0.0       0.0
+        2       1.0       0.0
+        3       0.0       1.0
+        4       1.0       1.0
+
 Unformat the file thusly:
     
     >>> line_rules={    None:(NodeCount),
