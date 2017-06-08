@@ -3,7 +3,7 @@ parmatter
 
 Tools for formatters that can also parse strings (i.e., with `unformat()` capability): a.k.a., "parmatters". 
 
-The `unformat` methods return `parse.Result` instances from the [parse](https://pypi.python.org/pypi/parse) module. 
+The `unformat` methods return `parse.Result` instances from the parse project. 
 
 Basic parmatter
 ---------------
