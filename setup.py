@@ -3,24 +3,16 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-import io
 import re
-from glob import glob
-from os.path import basename
-from os.path import dirname
-from os.path import join
-from os.path import splitext
 
 from setuptools import find_packages
 from setuptools import setup
 
 
-def read(*names, **kwargs):
-    return io.open(
-        join(dirname(__file__), *names),
-        encoding=kwargs.get('encoding', 'utf8')
-    ).read()
-
+def _read(file):
+    with open(file, 'rb') as fp:
+        return fp.read()
+        
 setup(
     name = 'parmatter',
     version = '0.0.3',
@@ -37,8 +29,8 @@ setup(
     install_requires=['parse'],
     include_package_data=True,
     long_description='%s\n%s' % (
-        re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),
-        re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))
+        re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', _read('README.rst').decode('utf-8')),
+        re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', _read('CHANGELOG.rst').decode('utf-8'))
     ),
     classifiers=[
         'Development Status :: 3 - Alpha',
