@@ -24,12 +24,12 @@ def read(*names, **kwargs):
 setup(
     name = 'parmatter',
     version = '0.0.1',
+	url='https://github.com/Ricyteach/parmatter',
     author = 'Rick Teachey',
     author_email = 'ricky@teachey.org',
     description = ('Tools for formatters that can also parse strings (i.e., with `unformat()` capability): a.k.a., "parmatters".'),
 	license = 'BSD',
     keywords = 'string Formatter format parse unformat parmatter format_group linemaker',
-    url = 'cbceng.com',
     py_modules=['src/parmatter/parmatter','src/parmatter/utilities'],
  	package_dir={'':'src'},
     packages=find_packages('src', exclude=['*.tests', '*.tests.*', 'tests.*', 'tests']),
