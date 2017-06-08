@@ -24,7 +24,7 @@ setup(
     keywords = 'string Formatter format parse unformat parmatter format_group linemaker',
     py_modules=[],
  	package_dir={'':'src'},
-    packages=find_packages('src', exclude=['*.tests', '*.tests.*', 'tests.*', 'tests']),
+    packages=find_packages(where='src', exclude=['*.tests', '*.tests.*', 'tests.*', 'tests']),
     scripts=['scripts/test_script.bat'],
     install_requires=['parse'],
     include_package_data=True,
