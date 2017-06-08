@@ -15,7 +15,7 @@ def _read(file):
         
 setup(
     name = 'parmatter',
-    version = '0.0.3',
+    version = '0.0.4',
 	url='https://github.com/Ricyteach/parmatter',
     author = 'Rick Teachey',
     author_email = 'ricky@teachey.org',
