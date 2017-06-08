@@ -23,7 +23,7 @@ def read(*names, **kwargs):
 
 setup(
     name = 'parmatter',
-    version = '0.0.1',
+    version = '0.0.2',
 	url='https://github.com/Ricyteach/parmatter',
     author = 'Rick Teachey',
     author_email = 'ricky@teachey.org',
@@ -41,25 +41,13 @@ setup(
         re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))
     ),
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 3 - Alpha',
+        'Intended Audience :: Developers',
         'Topic :: Utilities',
         'License :: OSI Approved :: BSD License',
         'Natural Language :: English',
-        'Operating System :: Unix',
-        'Operating System :: POSIX',
-        'Operating System :: Microsoft :: Windows',
-        'Programming Language :: Python',
-        # 'Programming Language :: Python :: 2.7',
-        # 'Programming Language :: Python :: 3',
-        # 'Programming Language :: Python :: 3.3',
-        # 'Programming Language :: Python :: 3.4',
-        # 'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: Implementation :: CPython',
-        # uncomment if you test on these interpreters:
-        # 'Programming Language :: Python :: Implementation :: PyPy',
-        # 'Programming Language :: Python :: Implementation :: IronPython',
-        # 'Programming Language :: Python :: Implementation :: Jython',
-        # 'Programming Language :: Python :: Implementation :: Stackless',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 3 :: Only',
+        'Topic :: Text Processing',
         'Topic :: Utilities',    ],
 )

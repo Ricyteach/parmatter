@@ -1,8 +1,6 @@
 from .meta import FormatGroupMeta
 from ..utilities import set_item_if
 from .. import VersatileParmatter
-import sys
-assert (sys.version_info)>(3,6) # required to maintain argument order
 
 def FormatGroup(name, meta=FormatGroupMeta, formatter_type=VersatileParmatter, *, prefix = '', sep = '', **kwargs):
     '''Factory for producing classes that define lines composed of formatting members 

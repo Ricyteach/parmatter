@@ -1,8 +1,6 @@
 from ..utilities import args_kwargs_from_args
 from collections import OrderedDict as od, namedtuple as nt
 import parse
-import sys
-assert (sys.version_info)>(3,6) # required to maintain argument order
 
 class SpecialAttrsMeta(type):
     '''A base metaclass that removes special attribute names from the namespace
