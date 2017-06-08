@@ -1,6 +1,11 @@
 Changelog (parmatter)
 ==================
 
+0.0.3 (2017-06-08)
+------------------
+
+- Corrected readme rst, added `parse` dependency
+
 0.0.2 (2017-06-08)
 ------------------
 
