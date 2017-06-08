@@ -128,3 +128,4 @@ Make use of the file data:
     OrderedDict([('Num', 4), ('X', 1.0), ('Y', 1.0)])
     >>> NodeLine.format(node4)
     '    4       1.0       1.0'
+    

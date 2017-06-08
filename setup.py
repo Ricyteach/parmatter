@@ -22,7 +22,7 @@ setup(
     description = ('Tools for formatters that can also parse strings (i.e., with `unformat()` capability): a.k.a., "parmatters".'),
 	license = 'BSD',
     keywords = 'string Formatter format parse unformat parmatter format_group linemaker',
-    py_modules=['src/parmatter/parmatter','src/parmatter/utilities'],
+    py_modules=[],
  	package_dir={'':'src'},
     packages=find_packages('src', exclude=['*.tests', '*.tests.*', 'tests.*', 'tests']),
     scripts=['scripts/test_script.bat'],
