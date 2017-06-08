@@ -34,7 +34,7 @@ setup(
  	package_dir={'':'src'},
     packages=find_packages('src', exclude=['*.tests', '*.tests.*', 'tests.*', 'tests']),
     scripts=['scripts/test_script.bat'],
-    install_requires=[],
+    install_requires=['parse'],
     include_package_data=True,
     long_description='%s\n%s' % (
         re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),
