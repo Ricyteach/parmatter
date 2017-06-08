@@ -1,5 +1,5 @@
-import pytest
 from parmatter import Parmatter
+import pytest
 import parse as _parse
 
 @pytest.fixture

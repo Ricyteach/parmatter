@@ -1,26 +1,13 @@
-'''parmatter
---------
-
-Tools for parsing formatters (that can also parse strings, i.e., with unformat() capability).
-
-Example usage: 
-
-    >>> f = Parmatter()
-    >>> assert f.format('{}', 'foo') = 'foo'
-    >>> assert list(f.unformat('{}', 'foo')) = ['foo']
-'''
-
 import string
 import parse as _parse # avoid potential name conflicts with parse methods
 
 # NOTE: All the Formatter docstrings mostly copied from the string docs page (Formatter does not have 
-# its own docstrings). 
+# its own docstrings... <sad_face>). 
 class Formatter():
-    '''Re-implementation of string.Formatter to add docstrings, and as a container so that the parse 
-    method can be overridden for other purposes and child classes can still override other API methods 
-    using super().'''
-    # just one Formatter instance needed for all classes
-    __formatter = string.Formatter()
+    '''Re-implementation of `string.Formatter` (using the composition patter) to add docstrings, and so 
+	that child classes can more easily override API methods using super().
+	
+	In general, the `format`, `vformat`, and `_vformat` methods shouldn't be overridden.'''
     def format(self, format_string, *args, **kwargs):
         '''The primary API method. Takes a format string and injects an 
         arbitrary set of positional and keyword arguments using format string
@@ -90,13 +77,12 @@ class Formatter():
         return string.Formatter.convert_field(self, value, conversion)
 
 class Parmatter(Formatter):
-    '''A parsing formatter. The various string format API methods can be overridden by child classes using 
-    super() for convenience, except the Parmatter.parse method. It is routed to the parser, not the formatter. 
-    If a child class needs to access __formatter.parse, it needs be done thusly:
-        obj._Parmatter__formatter.parse'''
+    '''A parsing formatter; i.e., a formatter that can also "unformat". 
+	
+	The various string format API methods can be overridden by child classes using super() for convenience.'''
     def unformat(self, format, string, extra_types=dict(s=str), evaluate_result=True):
         '''Inverse of format. Match my format to the string exactly.
 
-        Return a parse.Result or parse.Match instance or None if there's no match.
+        Return a parse.Result or parse.Match instance (or None if there's no match).
         '''
         return _parse.parse(format, string, extra_types, evaluate_result)

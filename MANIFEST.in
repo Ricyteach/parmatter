@@ -1,1 +1,7 @@
+graft src
+prune tests
+
+include LICENSE
 include README.rst
+
+global-exclude *.py[co] __pycache__
