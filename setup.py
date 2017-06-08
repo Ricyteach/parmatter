@@ -23,7 +23,7 @@ def read(*names, **kwargs):
 
 setup(
     name = 'parmatter',
-    version = '0.0.2',
+    version = '0.0.3',
 	url='https://github.com/Ricyteach/parmatter',
     author = 'Rick Teachey',
     author_email = 'ricky@teachey.org',
