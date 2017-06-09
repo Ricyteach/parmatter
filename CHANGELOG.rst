@@ -1,6 +1,13 @@
 Changelog (parmatter)
 =====================
 
+0.0.6 (2017-06-08)
+------------------
+
+- Reformat readme rst
+- Add ``python_requires='>=3'`` to setup py 
+- Add ``__version__.py`` to populate setup py
+
 0.0.5 (2017-06-08)
 ------------------
 

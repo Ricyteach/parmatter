@@ -20,27 +20,39 @@ Custom parmatters
     
 Some custom parmatters are also available. 
 
-``StaticParmatter`` is a parmatter with a pre-compiled (i.e., static) parser:
+``StaticParmatter``
+^^^^^^^^^^^^^^^^^^^^
+
+A parmatter with a pre-compiled (i.e., static) parser:
 
 >>> f = StaticParmatter('{}')
 >>> assert f.format('foo') == 'foo'
 >>> assert list(f.unformat('foo')) == ['foo']
     
-``DefaultParmatter`` is a parmatter with a default namespace. The namespace should have ``int`` keys for positional arguments, and ``str`` keys for named arguments:
+``DefaultParmatter``
+^^^^^^^^^^^^^^^^^^^^
+
+A parmatter with a default namespace. The namespace should have ``int`` keys for positional arguments, and ``str`` keys for named arguments:
 
 >>> f = DefaultParmatter(default_namespace={0:'foo', 'a':'bar'})
 >>> assert f.format('{}: {a}') == 'foo: bar'
 >>> f.unformat('{}: {a}','foo: bar')
     <Result ('foo',) {'a': 'bar'}>
 
-``PositionalDefaultParmatter`` is a parmatter with a default *positional* namespace:
+``PositionalDefaultParmatter``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A parmatter with a default *positional* namespace:
 
 >>> f = PositionalDefaultParmatter('foo', 'bar')
 >>> assert f.format('{}: {}') == 'foo: bar'
 >>> assert f.format('{}: {}', 'baz') == 'baz: bar'
 >>> assert list(f.unformat('{}: {}', 'foo: bar')) == ['foo', 'bar']
     
-``KeywordParmatter`` is a parmatter with a default *keyword* namespace:
+``KeywordParmatter``
+^^^^^^^^^^^^^^^^^^^^^
+
+A parmatter with a default *keyword* namespace:
 
 >>> f = KeywordParmatter(x='foo', y='bar')
 >>> assert f.format('{x}: {y}') == 'foo: bar'
@@ -48,7 +60,10 @@ Some custom parmatters are also available.
 >>> f.unformat('{x}: {y}', 'foo: bar')
 <Result () {'x': 'foo', 'y': 'bar'}>
     
-``AttrParmatter`` is a parmatter whose ``format`` method can populate fields using attributes from an object provided as an argument: 
+``AttrParmatter``
+^^^^^^^^^^^^^^^^^^^^
+
+A parmatter whose ``format`` method can populate fields using attributes from an object provided as an argument: 
 
 >>> obj = type('MyClass', (), {})()
 >>> obj.x = 'foo'
@@ -57,7 +72,10 @@ Some custom parmatters are also available.
 >>> f.unformat('{x}', 'foo')
 <Result () {'x': 'foo'}>
     
-``VersatileParmatter`` is a parmatter with a combination of the above functionalities:
+``VersatileParmatter``
+^^^^^^^^^^^^^^^^^^^^^^^
+
+A parmatter with a combination of the above functionalities:
 
 *  a pre-compiled (i.e., static) parser
 *  a default *positional* namespace
@@ -75,9 +93,12 @@ Basic Format Groups
 
 Parmatter groups are created in order to define different line types for files. 
 
-An individual parmatter could also define a line type on its own, but the parmatter group also has options for prefixes, separators, and naming of parmatters (useful in formatting and unformatting). The basic ``FormatGroup`` factory uses the ``VersatileParmatter`` by default. Note that the ``parse.Result`` object has been modified to make use of a named tuples; the named tuple fields are named for the ``FormatGroup`` arguments.
+An individual parmatter could also be used to define a line type on its own, but the parmatter group also has options for prefixes, separators, and naming of parmatters (useful in formatting and unformatting). The basic ``FormatGroup`` factory uses the ``VersatileParmatter`` by default. Note that the ``parse.Result`` object has been modified to make use of a named tuples; the named tuple fields are named for the format group arguments.
 
-Example usage:
+``FormatGroup``
+^^^^^^^^^^^^^^^^
+
+A format group factory. Example usage:
 
 >>> NodeCount = FormatGroup('NodeCount', Total = '{: >5d}')
 >>> NodeCount.unformat('    10').fixed
@@ -130,4 +151,3 @@ NodeLineData(Num=4, X=1.0, Y=1.0)
 OrderedDict([('Num', 4), ('X', 1.0), ('Y', 1.0)])
 >>> NodeLine.format(node4)
 '    4       1.0       1.0'
-
