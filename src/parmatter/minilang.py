@@ -1,3 +1,9 @@
+'''Tools for parsing the format specification mini language used by the ``format`` built-in function. 
+See the string module docs for more information.
+ 
+The mini language parsing functionality is not exposed in cPython and has therefore been re-implemented 
+here.'''
+
 from collections import namedtuple as nt
 import re
 
