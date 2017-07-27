@@ -26,6 +26,7 @@ class FloatIntParmatter(ParmatterBase):
         '''Add the fd spec to possible spec types.'''
         extra_types.update(fd=FloatIntParmatter._fd)
         return super().unformat(format, string, extra_types, evaluate_result)
+    # float or int regex
     @_parse.with_pattern(r'[+-]?(((?<!\d)(\.\d+))|(\d+\.\d*)|\d+)')
     @staticmethod
     def _fd(s):
@@ -33,8 +34,6 @@ class FloatIntParmatter(ParmatterBase):
         Requiers the .pattern attribute below to be added. 
         '''
         return float(s)
-
-# float or int regex: 
 
 
 class StaticParmatter(ParmatterBase):
