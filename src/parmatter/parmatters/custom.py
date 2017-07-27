@@ -6,6 +6,17 @@ import parse as _parse # avoid name conflicts with parse methods
 #NOTE: the parse module seems to have some trouble with string fields and spaces around them. don't implicitly trust it. 
 
 class FloatIntParmatter(ParmatterBase):
+    '''A parsing formatting which the option of using a new custom spec, "fd".
+    The "fd" spec indicates a float value that could also be read as an int. 
+    
+    Example usage:
+        >>> list(FloatIntParmatter().unformat('{:fd}', '1'))
+        1.0
+        >>> list(FloatIntParmatter().unformat('{:fd}', '1.0'))
+        1.0
+        >>> FloatIntParmatter().format('{:.1fd}', 1)
+        '1.0'
+    '''
     def format_field(self, value, spec):
         '''Replace fd with f when formatting is carried out.'''
         if spec.endswith('fd'):
@@ -19,7 +30,7 @@ class FloatIntParmatter(ParmatterBase):
     @staticmethod
     def _fd(s):
         '''Method used by the parse module to populate re.Result output.
-        Requies the .pattern attribute below to be added. 
+        Requiers the .pattern attribute below to be added. 
         '''
         return float(s)
 
