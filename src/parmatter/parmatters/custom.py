@@ -5,8 +5,25 @@ from ..utilities import args_kwargs_from_args
 import parse as _parse # avoid name conflicts with parse methods
 #NOTE: the parse module seems to have some trouble with string fields and spaces around them. don't implicitly trust it. 
 
-class FloatIntParmatter(ParmatterBase):
-    '''A parsing formatting which the option of using a new custom spec, "fd".
+class StaticParmatter(ParmatterBase):
+    '''A parsing formatter with a designated format string.'''
+    def __init__(self, format_str, *args, **kwargs):
+        self._format_str = format_str
+        self.set_parser(self._format_str, dict(s=str))
+        super().__init__(*args, **kwargs)
+    def format(self, *args, **kwargs):
+        '''ParmatterBase.format overridden to remove format_str from the signature.'''
+        return super().format(self._format_str, *args, **kwargs)
+    def unformat(self, string):
+        '''ParmatterBase.unformat overridden to use compiled parser.'''
+        return self._parser.parse(string)
+    def set_parser(self, spec, extra_types=dict(s=str)):
+        '''Sets a static parser for the parmatter.'''
+        self._parser = _parse.compile(spec, extra_types)
+
+
+class FloatIntParmatter(StaticParmatter):
+    '''A parsing formatter which the option of using a new custom spec, "fd".
     The "fd" spec indicates a float value that could also be read as an int. 
     
     Example usage:
@@ -34,20 +51,12 @@ class FloatIntParmatter(ParmatterBase):
         Requiers the .pattern attribute below to be added. 
         '''
         return float(s)
+    def set_parser(self, spec, extra_types=dict(s=str)):
+        '''Sets a static parser for the parmatter, including new fd spec.'''
+        if 'fd' not in extra_types:
+            extra_types.update(fd=FloatIntParmatter._fd)
+        self._parser = _parse.compile(spec, extra_types)
 
-
-class StaticParmatter(ParmatterBase):
-    '''A parsing formatter with a designated format string.'''
-    def __init__(self, format_str, *args, **kwargs):
-        self._format_str = format_str
-        self._parser = _parse.compile(self._format_str, dict(s=str))
-        super().__init__(*args, **kwargs)
-    def format(self, *args, **kwargs):
-        '''ParmatterBase.format overridden to remove format_str from the signature.'''
-        return super().format(self._format_str, *args, **kwargs)
-    def unformat(self, string):
-        '''ParmatterBase.unformat overridden to use compiled parser.'''
-        return self._parser.parse(string)
 
 class DefaultParmatter(ParmatterBase):
     '''A parsing formatter with any default namespace.
