@@ -1,1 +1,1 @@
-from .custom import StaticParmatter, DefaultParmatter, AttrParmatter, PositionalDefaultParmatter, KeywordParmatter, VersatileParmatter
+from .custom import FloatIntParmatter, StaticParmatter, DefaultParmatter, AttrParmatter, PositionalDefaultParmatter, KeywordParmatter, VersatileParmatter

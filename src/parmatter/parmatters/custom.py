@@ -5,6 +5,27 @@ from ..utilities import args_kwargs_from_args
 import parse as _parse # avoid name conflicts with parse methods
 #NOTE: the parse module seems to have some trouble with string fields and spaces around them. don't implicitly trust it. 
 
+class FloatIntParmatter(ParmatterBase):
+    def format_field(self, value, spec):
+        '''Replace fd with f when formatting is carried out.'''
+        if spec.endswith('fd'):
+            spec = spec[:-2] + 'f'
+        return super().format_field(value, spec)
+    def unformat(self, format, string, extra_types=dict(s=str), evaluate_result=True):
+        '''Add the fd spec to possible spec types.'''
+        extra_types.update(fd=FloatIntParmatter._fd)
+        return super().unformat(format, string, extra_types, evaluate_result)
+    @_parse.with_pattern(r'[+-]?(((?<!\d)(\.\d+))|(\d+\.\d*)|\d+)')
+    @staticmethod
+    def _fd(s):
+        '''Method used by the parse module to populate re.Result output.
+        Requies the .pattern attribute below to be added. 
+        '''
+        return float(s)
+
+# float or int regex: 
+
+
 class StaticParmatter(ParmatterBase):
     '''A parsing formatter with a designated format string.'''
     def __init__(self, format_str, *args, **kwargs):

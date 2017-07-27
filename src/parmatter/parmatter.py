@@ -1,8 +1,8 @@
 import string
 import parse as _parse # avoid potential name conflicts with parse methods
 
-# NOTE: All the Formatter docstrings mostly copied from the string docs page (Formatter does not have 
-# its own docstrings... <sad_face>). 
+# NOTE: All the Formatter docstrings mostly copied from the string docs page (Formatter does
+# not have its own docstrings... <sad_face>). 
 class Formatter():
     '''Re-implementation of `string.Formatter` (using the composition patter) to add docstrings, and so 
 	that child classes can more easily override API methods using super().
