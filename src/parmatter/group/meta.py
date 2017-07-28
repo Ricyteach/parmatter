@@ -61,6 +61,12 @@ class FormatGroupMeta(SpecialAttrsMeta):
         formatters = (formatter_type(*formatter_args[k], **formatter_kwargs[k]) for k in formatter_defs)
         # pass each set of args and kwargs to the formatter type
         cls._formatters = {k:formatter for k,formatter in zip(formatter_defs,formatters)}
+        # attempt to grab extra types dict from an existing compiler (assume all of them are identical)
+        try:
+            cls._extra_types = next(iter(cls._formatters.values()))._parser._extra_types
+        # no existing compiler 
+        except (AttributeError, StopIteration):
+            pass
         cls.__init__(name,bases,mapping)
     def format(cls, *args, _asdict=True, _popmappings=True, **unified_namespace):
         '''Return a combined formatted string using joined formatter members.
@@ -102,8 +108,15 @@ class FormatGroupMeta(SpecialAttrsMeta):
 
         Return a parse.Result or parse.Match instance or None if there's no match.
         '''
-        fmat_str = cls._prefix + cls._sep.join(member._format_str for member in cls)
-        result = parse.parse(fmat_str, string, dict(s=str), evaluate_result=evaluate_result)
+        fmat_str = (cls._sep if cls._sep else ' ').join(member._format_str for member in cls)
+        # try to get extra type from precompiled parser set at initialization
+        try:
+            extra_types = cls._extra_types
+        # parser wasn't precompiled so just assume the default
+        except AttributeError:
+            extra_types = dict(s=str)
+        print('fmat_str:\n', fmat_str, 'string:\n', string[len(cls._prefix):], sep='\n')
+        result = parse.parse(fmat_str, string[len(cls._prefix):], extra_types, evaluate_result=evaluate_result)
         # replace default output tuple with namedtuple
         if result is not None and result.fixed:
             result.fixed=list(result.fixed)

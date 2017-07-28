@@ -39,12 +39,8 @@ class FloatIntParmatter(StaticParmatter):
         if spec.endswith('fd'):
             spec = spec[:-2] + 'f'
         return super().format_field(value, spec)
-    def unformat(self, format, string, extra_types=dict(s=str), evaluate_result=True):
-        '''Add the fd spec to possible spec types.'''
-        extra_types.update(fd=FloatIntParmatter._fd)
-        return super().unformat(format, string, extra_types, evaluate_result)
     # float or int regex
-    @_parse.with_pattern(r'[+-]?(((?<!\d)(\.\d+))|(\d+\.\d*)|\d+)')
+    @_parse.with_pattern(r'[+-]?((\.\d+)|(\d+\.\d*)|\d+)')
     @staticmethod
     def _fd(s):
         '''Method used by the parse module to populate re.Result output.
