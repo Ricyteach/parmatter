@@ -2,6 +2,8 @@
 
 from .base import ParmatterBase
 from ..utilities import args_kwargs_from_args
+from ..blank import make_blank
+from ..minilang import parse_spec, parse_format_str
 import parse as _parse # avoid name conflicts with parse methods
 #NOTE: the parse module seems to have some trouble with string fields and spaces around them. don't implicitly trust it. 
 
@@ -17,13 +19,13 @@ class StaticParmatter(ParmatterBase):
     def unformat(self, string):
         '''ParmatterBase.unformat overridden to use compiled parser.'''
         return self._parser.parse(string)
-    def set_parser(self, spec, extra_types=dict(s=str)):
+    def set_parser(self, format_str, extra_types=dict(s=str)):
         '''Sets a static parser for the parmatter.'''
-        self._parser = _parse.compile(spec, extra_types)
+        self._parser = _parse.compile(format_str, extra_types)
 
 
 class FloatIntParmatter(StaticParmatter):
-    '''A parsing formatter which the option of using a new custom spec, "fd".
+    '''A parsing formatter which has the option of using a new custom spec, "fd".
     The "fd" spec indicates a float value that could also be read as an int. 
     
     Example usage:
@@ -35,23 +37,115 @@ class FloatIntParmatter(StaticParmatter):
         '1.0'
     '''
     def format_field(self, value, spec):
-        '''Replace fd with f when formatting is carried out.'''
-        if spec.endswith('fd'):
-            spec = spec[:-2] + 'f'
+        '''Replace fd with f when formatting is carried out so the the fd
+        format behaves exactly like f during formatting.'''
+        spec_tup = parse_spec(spec, strict=False)
+        spec = spec_tup._replace(type=spec_tup.replace('fd', 'f')).join()
         return super().format_field(value, spec)
     # float or int regex
     @_parse.with_pattern(r'[+-]?((\.\d+)|(\d+\.\d*)|\d+)')
     @staticmethod
     def _fd(s):
-        '''Method used by the parse module to populate re.Result output.
-        Requiers the .pattern attribute below to be added. 
+        '''Method used by the parse module to populate re.Result
+        output for the fd formatting spec.
         '''
         return float(s)
-    def set_parser(self, spec, extra_types=dict(s=str)):
+    def set_parser(self, format_str, extra_types=dict(s=str)):
         '''Sets a static parser for the parmatter, including new fd spec.'''
         if 'fd' not in extra_types:
             extra_types.update(fd=FloatIntParmatter._fd)
-        self._parser = _parse.compile(spec, extra_types)
+        self._parser = _parse.compile(format_str, extra_types)
+
+
+class BlankParmatter(StaticParmatter):
+    '''A parsing formatter which has the option of using a new custom spec, "blank".
+    The "blank" spec indicates a value that could also be read as whitespace. 
+    
+    Example usage:
+        >>> list(BlankParmatter().unformat('{:dblank}', '1'))
+        1
+        >>> list(BlankParmatter().unformat('{:dblank}', '            '))
+        
+        >>> list(BlankParmatter().unformat('{:fblank}', '1.0'))
+        1.0
+        >>> BlankParmatter().format('{:.1fblank}', 1)
+        '1.0'
+    
+    Does not support specs that have the word "blank" anywhere outside of a format spec!
+    '''
+    # regex for "all blank space"
+    blank_pattern = r'^\s*$'
+    # for initializing different format type codes, use a mapping to 
+    # associate a function decorated by with_pattern(blank_pattern);
+    # only used when "blank"
+    def _blank_handler(f, pattern):
+        '''Handler factory for special spec types.'''
+        @_parse.with_pattern(pattern)
+        def _handler(s):
+            if s.split():
+                return f(s)
+            else:
+                return f()
+        return _handler
+    # to be replaced below:
+    def blank_type_to_func(handler_factory, pattern):
+        return {k:handler_factory(v, pattern) for k,v in 
+                            {'':str, 'fd':float, 's':str,
+                             'd':int, 'f':float, 'n':int}.items()}
+    # replacing function above:
+    blank_type_to_func = blank_type_to_func(_blank_handler, blank_pattern)
+    def format_field(self, value, spec):
+        '''Replace value with a Blank object when formatting is carried out. The
+        Blank object type knows how to deal with the "blank" spec type. If the value
+        is just white space, a blank_initializer based on the spec type is passed
+        instead.
+        '''
+        spec_tup = parse_spec(spec, strict=False)
+        if 'blank' in spec_tup.type:
+            try:
+                # is it a string?
+                blanketyblank = value.strip()
+            except AttributeError:
+                # not a string; no problem
+                pass
+            else:
+                # falsey stripped string?
+                if not blanketyblank:
+                    # for looking up blank_initializer
+                    spec_type = spec_tup.type.replace('blank', '')
+                    # replace value (eg 0 for types such as int and float)
+                    value = BlankParmatter.blank_type_to_func[spec_type]()
+            # falsey objects from make_blank will appear blank when formatted
+            value = make_blank(value)
+        return super().format_field(value, spec)
+    def set_parser(self, format_str, extra_types=dict(s=str)):
+        '''Add new blank spec suffixes to the parser's extra_types argument.'''
+        # Need to add a different blank spec handler for each of the different kinds of 
+        # format spec types (d, n, f, s, etc etc) in the format_str
+        # First parse the format_str into usable form (borrowing code from parse module)
+        # note: '{{' and '}}' come in from parse_format_str as separate parts
+        fields = (part for part in parse_format_str(format_str) 
+                   if part and part[0] == '{' and part[-1] == '}')
+
+        # gather the non-blank spec types and add a handler for each
+        for field in fields:
+            no_brackets = field[1:-1]
+            try:
+                spec_tup = parse_spec(no_brackets.split(':', 1)[1], strict=False)
+            except IndexError:
+                raise ValueError('No format specification was provided for the parser.')
+            # get version of the spec without the word "blank"
+            spec_tup_new = spec_tup._replace(type=spec_tup.type.replace('blank', ''))
+            # get the correct with_pattern blank initializer for the spec type
+            try:
+                blank_initializer = BlankParmatter.blank_type_to_func[spec_tup_new.type]
+            except KeyError as err:
+                raise KeyError('The spec type {!r} does not have an associated initializer.'
+                               ''.format(spec_tup.type)) from err
+            # pass the initializer (decorated by with_pattern) to the extra_types dict for the parser
+            extra_types.update({spec_tup.type: lambda s: blank_initializer(s)})
+        # the original format_str is unaffected
+        super().set_parser(format_str, extra_types)
 
 
 class DefaultParmatter(ParmatterBase):
