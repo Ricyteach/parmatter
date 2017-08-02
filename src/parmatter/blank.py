@@ -14,7 +14,7 @@ class BlankBase():
         # only act on "blank"  if object is falsey
         if 'blank' in spec_tup.type and not self:
             spec = spec_tup._replace(type='s').join()
-            result = format('', spec)
+            result = format(' ', spec)
         else:
             result = super().__format__(spec)
         return result

@@ -40,11 +40,11 @@ class FloatIntParmatter(StaticParmatter):
         '''Replace fd with f when formatting is carried out so the the fd
         format behaves exactly like f during formatting.'''
         spec_tup = parse_spec(spec, strict=False)
-        spec = spec_tup._replace(type=spec_tup.replace('fd', 'f')).join()
+        spec = spec_tup._replace(type=spec_tup.type.replace('fd', 'f')).join()
         return super().format_field(value, spec)
     # float or int regex
-    @_parse.with_pattern(r'[+-]?((\.\d+)|(\d+\.\d*)|\d+)')
     @staticmethod
+    @_parse.with_pattern(r'[+-]?((\.\d+)|(\d+\.\d*)|\d+)')
     def _fd(s):
         '''Method used by the parse module to populate re.Result
         output for the fd formatting spec.
@@ -60,24 +60,25 @@ class FloatIntParmatter(StaticParmatter):
 class BlankParmatter(StaticParmatter):
     '''A parsing formatter which has the option of using a new custom spec, "blank".
     The "blank" spec indicates a value that could also be read as whitespace. 
-    
+
     Example usage:
         >>> list(BlankParmatter().unformat('{:dblank}', '1'))
         1
         >>> list(BlankParmatter().unformat('{:dblank}', '            '))
-        
+        0
         >>> list(BlankParmatter().unformat('{:fblank}', '1.0'))
         1.0
-        >>> BlankParmatter().format('{:.1fblank}', 1)
-        '1.0'
-    
-    Does not support specs that have the word "blank" anywhere outside of a format spec!
+        >>> BlankParmatter().format('{:.1fblank}', 0.0)
+        ' '
+        >>> BlankParmatter().format('{:.1fblank}', 1.1)
+        '1.1'
     '''
     # regex for "all blank space"
-    blank_pattern = r'^\s*$'
+    blank_pattern = r'\s*'
     # for initializing different format type codes, use a mapping to 
     # associate a function decorated by with_pattern(blank_pattern);
     # only used when "blank"
+    @staticmethod
     def _blank_handler(f, pattern):
         '''Handler factory for special spec types.'''
         @_parse.with_pattern(pattern)
@@ -93,7 +94,7 @@ class BlankParmatter(StaticParmatter):
                             {'':str, 'fd':float, 's':str,
                              'd':int, 'f':float, 'n':int}.items()}
     # replacing function above:
-    blank_type_to_func = blank_type_to_func(_blank_handler, blank_pattern)
+    blank_type_to_func = blank_type_to_func(_blank_handler.__func__, blank_pattern)
     def format_field(self, value, spec):
         '''Replace value with a Blank object when formatting is carried out. The
         Blank object type knows how to deal with the "blank" spec type. If the value
@@ -126,7 +127,6 @@ class BlankParmatter(StaticParmatter):
         # note: '{{' and '}}' come in from parse_format_str as separate parts
         fields = (part for part in parse_format_str(format_str) 
                    if part and part[0] == '{' and part[-1] == '}')
-
         # gather the non-blank spec types and add a handler for each
         for field in fields:
             no_brackets = field[1:-1]
