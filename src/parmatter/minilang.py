@@ -1,6 +1,6 @@
 '''Tools for parsing the format specification mini language used by the ``format`` built-in function. 
 See the string module docs for more information.
- 
+
 The mini language parsing functionality is not exposed in cPython and has therefore been re-implemented 
 here.'''
 
@@ -44,7 +44,7 @@ class FormatSpec(_FormatSpec):
             return format(self.join(), format_spec)
         except (TypeError, ValueError):
             return super().__format__(format_spec)
-        
+
 FormatSpec.__doc__=_FormatSpec.__doc__.replace('FormatSpecBase','FormatSpec')
 FormatSpec.__new__.__doc__=_FormatSpec.__new__.__doc__.replace('FormatSpecBase','FormatSpec')
 
@@ -61,6 +61,28 @@ def parse_spec(spec, strict=True):
         raise ValueError('The provided format specification string {!r} does '
                          'not conform to the format specification mini language.'
                          ''.format(spec)) from None
+
+SpecConvert = nt('SpecConvert', 'spec converter')
+
+def define(spec):
+    '''Make a (format_spec, conversion) tuple for use in the extra_types argument of 
+    parse.Parse instances.'''
+    spec_def=parse_spec(spec)
+    spec_type=spec_def.type
+    spec_type=spec_def.type
+    def general(text):
+        if spec_def.width != len(text):
+            return None
+        if spec_def.align:
+            fill=spec_def.fill if spec_def.fill else ' '
+            sign=spec_def.sign if spec_def.sign else ''
+    def f(text):
+        return float(text)
+    def d(text):
+        return int(text)
+    def s(test):
+        return str(text)
+    return SpecConvert(spec, dict(f=f, d=d, s=s)[spec_type])
 
 def parse_format_str(format_str):
     '''Generates format string fields.'''
