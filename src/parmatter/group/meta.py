@@ -108,7 +108,7 @@ class FormatGroupMeta(SpecialAttrsMeta):
 
         Return a parse.Result or parse.Match instance or None if there's no match.
         '''
-        fmat_str = (cls._sep if cls._sep else ' ').join(member._format_str for member in cls)
+        fmat_str = (cls._sep if cls._sep else '').join(member._format_str for member in cls)
         # try to get extra type from precompiled parser set at initialization
         try:
             extra_types = cls._extra_types

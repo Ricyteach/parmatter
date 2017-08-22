@@ -69,7 +69,6 @@ def define(spec):
     parse.Parse instances.'''
     spec_def=parse_spec(spec)
     spec_type=spec_def.type
-    spec_type=spec_def.type
     def general(text):
         if spec_def.width != len(text):
             return None
